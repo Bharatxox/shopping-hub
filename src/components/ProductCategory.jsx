@@ -1,31 +1,66 @@
 import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import MyContext from "../context/MyContext";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import { Link, useNavigate } from "react-router-dom";
+
+const responsive = {
+  superLargeDesktop: {
+    // the naming can be any, depends on you.
+    breakpoint: { max: 3000, min: 1024 },
+    items: 5,
+  },
+  desktop: {
+    breakpoint: { max: 1024, min: 650 },
+    items: 3,
+  },
+  tablet: {
+    breakpoint: { max: 650, min: 464 },
+    items: 2,
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+  },
+};
 
 const products = [
   {
     img: "https://cdn.easyfrontend.com/pictures/ecommerce/product25.jpg",
-    title: "Holiday Season",
+    title: "Mobile & Accessories",
   },
   {
     img: "https://cdn.easyfrontend.com/pictures/ecommerce/product26.jpg",
-    title: "For Him",
+    title: "TV, Applications & Electronics",
   },
   {
     img: "https://cdn.easyfrontend.com/pictures/ecommerce/product35.jpg",
-    title: "For Kids",
+    title: "Men's Fashion",
   },
   {
     img: "https://cdn.easyfrontend.com/pictures/ecommerce/product28.jpg",
-    title: "Indoors",
+    title: "Womens Fashion",
   },
   {
     img: "https://cdn.easyfrontend.com/pictures/ecommerce/product29.jpg",
-    title: "For Her",
+    title: "Home & Kitchen",
   },
   {
     img: "https://cdn.easyfrontend.com/pictures/ecommerce/product30.jpg",
-    title: "Best Discounts",
+    title: "Beauty , Health & Grocerries",
+  },
+  {
+    img: "https://cdn.easyfrontend.com/pictures/ecommerce/product30.jpg",
+    title: "Sports Fitness",
+  },
+  {
+    img: "https://cdn.easyfrontend.com/pictures/ecommerce/product30.jpg",
+    title: "Toyes & Baby Products",
+  },
+  {
+    img: "https://cdn.easyfrontend.com/pictures/ecommerce/product30.jpg",
+    title: "Books",
   },
 ];
 
@@ -33,26 +68,27 @@ const ProductItem = ({ product }) => {
   const { mode } = useContext(MyContext);
 
   return (
-    <a href="#!">
+    <Link to={`/search/${product.title}`}>
       <div className="flex flex-col items-center justify-center">
         <div className="w-44 h-44 flex justify-center items-center">
           <img
-            src={product.img}
-            className="rounded-full max-w-full max-h-full w-auto"
-            alt={product.title}
+            draggable="false"
+            src={product?.img}
+            className="rounded-full  max-w-full max-h-full w-auto "
+            alt={product?.title}
           />
         </div>
         <div className="p-4 md:p-6">
           <h2
-            className={`text-lg font-bold leading-none my-2 ${
+            className={`text-base font-bold leading-none my-2 text-center ${
               mode === "dark" ? "text-white" : "text-black"
             }`}
           >
-            {product.title}
+            {product?.title}
           </h2>
         </div>
       </div>
-    </a>
+    </Link>
   );
 };
 
@@ -80,15 +116,14 @@ const ProductCat = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-12 gap-6 text-center mt-6 md:mt-12">
-          {products.map((product, i) => (
-            <div
-              className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 xl:col-span-2"
-              key={i}
-            >
-              <ProductItem product={product} />
-            </div>
-          ))}
+        <div className="py-5">
+          <Carousel responsive={responsive}>
+            {products.map((product, i) => (
+              <div className="py-2" key={i}>
+                <ProductItem product={product} />
+              </div>
+            ))}
+          </Carousel>
         </div>
       </div>
     </section>

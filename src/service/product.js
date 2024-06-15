@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const products = createApi({
+export const productsApi = createApi({
   reducerPath: "products",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://real-time-amazon-data.p.rapidapi.com/",
     headers: {
-      "x-rapidapi-key": "534014e1dcmsh9d1aee8138689c4p1ef201jsndc017eb2788b",
+      "x-rapidapi-key": "0404b73554msh76f0580f88bb7d3p1b3b5djsnbe6622d8da6a",
       "x-rapidapi-host": "real-time-amazon-data.p.rapidapi.com",
     },
   }),
@@ -20,7 +20,12 @@ export const products = createApi({
       query: () => "deals-v2?country=IN",
     }),
     productSearch: builder.query({
-      query: (query) => `search?query=${query}&page=1&country=IN`,
+      query: (args) => {
+        const { search, page = 1 } = args;
+        return {
+          url: `search?query=${search}&page=${page}&country=IN`,
+        };
+      },
     }),
     productCategory: builder.query({
       query: (category) =>
@@ -30,9 +35,8 @@ export const products = createApi({
 });
 
 export const {
-  useGetPopularMoviesQuery,
-  useGetTopRatedMoviesQuery,
-  useSearchMoviesQuery,
-  useUpcomingMoviesQuery,
-  useConfigurationQuery,
-} = popularMoviesApi;
+  useDealsQuery,
+  useProductDetailQuery,
+  useProductSearchQuery,
+  useProductCategoryQuery,
+} = productsApi;

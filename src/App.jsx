@@ -14,6 +14,7 @@ import ProductsInfo from "./components/ProductsInfo";
 import { auth } from "./firebase/FirebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { PrivateRoute } from "./components/PrivateRoute";
+import { ProductPageList } from "./pages/ProductPageList/ProductPageList";
 
 // import NoPage from "./pages/Error/NoPage";
 
@@ -96,6 +97,10 @@ function App() {
         {
           path: "/product/:productId",
           element: <ProductsInfo />,
+        },
+        {
+          path: "/search/:productCatId",
+          element: <ProductPageList />,
         },
       ],
     },
