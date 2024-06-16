@@ -92,11 +92,11 @@ function App() {
 
         {
           path: "/allproducts",
-          element: <Products />,
+          element: <ProductsInfo />,
         },
         {
           path: "/product/:productId",
-          element: <ProductsInfo />,
+          element: <Products />,
         },
         {
           path: "/search/:productCatId",

@@ -5,16 +5,13 @@ export const productsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://real-time-amazon-data.p.rapidapi.com/",
     headers: {
-      "x-rapidapi-key": "0404b73554msh76f0580f88bb7d3p1b3b5djsnbe6622d8da6a",
+      "x-rapidapi-key": "b39aefec0bmshfb02d91d4ec62d6p12e801jsn4c77c69bb84d",
       "x-rapidapi-host": "real-time-amazon-data.p.rapidapi.com",
     },
   }),
   endpoints: (builder) => ({
-    // productOffer: builder.query({
-    //   query: () => "product-offers",
-    // }),
     productDetail: builder.query({
-      query: (asin) => `product-details?asin=${asin}&country=IN`,
+      query: (search) => `product-details?asin=${search}&country=IN`,
     }),
     deals: builder.query({
       query: () => "deals-v2?country=IN",

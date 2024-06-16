@@ -1,16 +1,19 @@
-import { useParams } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { throttle } from "lodash";
 import MyContext from "../../context/MyContext";
 import { useProductSearchQuery } from "../../service/product";
-import Loader from "../../components/Loader";
 import Rating from "../../components/Rating";
+import { Oval } from "react-loader-spinner";
 
 export const ProductPageList = () => {
   const { productCatId } = useParams();
   const { mode } = useContext(MyContext);
   const [page, setPage] = useState(1);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   console.log(productCatId);
 
   console.log(productCatId);
@@ -18,7 +21,50 @@ export const ProductPageList = () => {
     data: searchData,
     // error: searchError,
     isLoading: searchIsLoading,
+    isFetching: searchIsFetching,
   } = useProductSearchQuery({ search: productCatId, page: page });
+
+  useEffect(() => {
+    if (searchData?.data?.products) {
+      setProducts((prevProducts) => [
+        ...prevProducts,
+        ...searchData.data.products,
+      ]);
+      setIsLoading(false);
+    }
+  }, [searchData]);
+
+  const handleScroll = useCallback(
+    throttle(() => {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 500 &&
+        !isLoading &&
+        !searchIsFetching
+      ) {
+        setPage((prevPage) => prevPage + 1);
+        setIsLoading(true);
+      }
+    }, 200),
+    [isLoading, searchIsFetching]
+  );
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  // useEffect(() => {
+  //   if (!searchIsFetching && isLoading) {
+  //     setIsLoading(false);
+  //   }
+  // }, [searchIsFetching, isLoading]);
+
+  useEffect(() => {
+    if (searchIsFetching) {
+      console.log("trueeeeeeeeeeeeeeeeeeeeeeeeeee");
+    }
+  }, [searchIsFetching]);
 
   const truncateTitle = (title, length = 30) => {
     if (!title) return "N/A";
@@ -27,13 +73,24 @@ export const ProductPageList = () => {
 
   if (searchIsLoading) {
     return (
-      <div>
-        <Loader />
+      <div className="flex justify-center my-4">
+        <Oval
+          visible={true}
+          height="30"
+          width="30"
+          color="rgb(37 99 253)"
+          ariaLabel="oval-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+          strokeWidth="5"
+        />
       </div>
     );
   }
   console.log(searchData);
   console.log(page);
+  console.log(isLoading);
+  console.log(searchIsLoading);
 
   return (
     <div className="">
@@ -47,87 +104,90 @@ export const ProductPageList = () => {
         </h1>
       </div>
       <div className="">
-        {!searchIsLoading ? (
-          <div className="grid grid-cols-12 gap-6">
-            {searchData?.data?.products
-              ?.slice(0, 10)
-
-              .map((deal) => (
+        <div className="grid grid-cols-12 gap-6">
+          {products?.map((deal) => (
+            <div
+              className="col-span-12 md:col-span-6 xl:col-span-4"
+              key={deal?.product_title}
+            >
+              <Link to={`/product/${deal?.asin}`}>
+                {/* <h2>{data?.deal_title}</h2> */}
                 <div
-                  className="col-span-12 md:col-span-6 xl:col-span-4"
-                  key={deal?.product_title}
+                  className={`  rounded-lg overflow-hidden max-w-sm mx-auto my-4 border ${
+                    mode === "dark"
+                      ? "bg-[#0b1727] text-white  border-slate-700"
+                      : "bg-white text-zinc-900   border-gray-300"
+                  }`}
                 >
-                  {/* <h2>{data?.deal_title}</h2> */}
-                  <div
-                    className={`  rounded-lg overflow-hidden max-w-sm mx-auto my-4 border ${
-                      mode === "dark"
-                        ? "bg-[#0b1727] text-white  border-slate-700"
-                        : "bg-white text-zinc-900   border-gray-300"
-                    }`}
-                  >
-                    <div className="w-full bg-white py-3">
-                      <img
-                        src={deal?.product_photo}
-                        alt={deal?.product_title}
-                        className="w-full h-64 object-contain  "
-                      />
+                  <div className="w-full bg-white py-3">
+                    <img
+                      src={deal?.product_photo}
+                      alt={deal?.product_title}
+                      className="w-full h-64 object-contain  "
+                    />
+                  </div>
+                  <div className="px-5 pt-5 pb-8 ">
+                    {/* <h2 className="text-lg font-semibold">{deal?.deal_title}</h2> */}
+                    <a href="#!">
+                      <h5
+                        className={`text-[20px] font-medium hover:underline mb-1 ${
+                          mode === "dark" ? "text-white" : "text-black"
+                        }`}
+                      >
+                        {truncateTitle(deal?.product_title) || "N/A"}
+                      </h5>
+                    </a>
+                    <p className="mt-2 text-gray-600">
+                      <div className="py-2 flex items-center">
+                        <h5 className="text-2xl font-medium text-blue-600">
+                          {deal?.product_price}
+                        </h5>
+                      </div>
+                    </p>
+                    <div className="flex gap-3">
+                      <Rating rating={deal?.product_star_rating} />
+                      <p className=" text-gray-600 dark:text-gray-400">
+                        {deal?.product_star_rating} ({deal?.product_num_ratings}{" "}
+                        ratings)
+                      </p>
                     </div>
-                    <div className="px-5 pt-5 pb-8 ">
-                      {/* <h2 className="text-lg font-semibold">{deal?.deal_title}</h2> */}
-                      <a href="#!">
-                        <h5
-                          className={`text-[20px] font-medium hover:underline mb-1 ${
-                            mode === "dark" ? "text-white" : "text-black"
+                    <div className="flex justify-between items-center ">
+                      <p className=" text-gray-600 dark:text-gray-400">
+                        {truncateTitle(deal.delivery)}
+                      </p>
+                      <div className="flex">
+                        <button
+                          className={`text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white rounded py-1 px-3 text-sm mr-2 ${
+                            mode === "dark" ? "dark:bg-slate-800" : "bg-white"
                           }`}
                         >
-                          {truncateTitle(deal?.product_title) || "N/A"}
-                        </h5>
-                      </a>
-                      <p className="mt-2 text-gray-600">
-                        <div className="py-2 flex items-center">
-                          <h5 className="text-2xl font-medium text-blue-600">
-                            {deal?.product_price}
-                          </h5>
-                        </div>
-                      </p>
-                      <div className="flex gap-3">
-                        <Rating rating={deal?.product_star_rating} />
-                        <p className=" text-gray-600 dark:text-gray-400">
-                          {deal?.product_star_rating} (
-                          {deal?.product_num_ratings} ratings)
-                        </p>
-                      </div>
-                      <div className="flex justify-between items-center ">
-                        <p className=" text-gray-600 dark:text-gray-400">
-                          {truncateTitle(deal.delivery)}
-                        </p>
-                        <div className="flex">
-                          <button
-                            className={`text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white rounded py-1 px-3 text-sm mr-2 ${
-                              mode === "dark" ? "dark:bg-slate-800" : "bg-white"
-                            }`}
-                          >
-                            <FontAwesomeIcon icon={faHeart} />
-                          </button>
-                          <button className="bg-blue-600 border border-blue-600 text-white hover:bg-opacity-90 py-1 px-3 rounded text-sm">
-                            <FontAwesomeIcon icon={faShoppingCart} />
-                          </button>
-                        </div>
+                          <FontAwesomeIcon icon={faHeart} />
+                        </button>
+                        <button className="bg-blue-600 border border-blue-600 text-white hover:bg-opacity-90 py-1 px-3 rounded text-sm">
+                          <FontAwesomeIcon icon={faShoppingCart} />
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              ))}
+              </Link>
+            </div>
+          ))}
+        </div>
+        {isLoading && (
+          <div className="flex justify-center my-4">
+            <Oval
+              visible={true}
+              height="30"
+              width="30"
+              color="rgb(37 99 253)"
+              ariaLabel="oval-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              strokeWidth="4"
+            />
           </div>
-        ) : (
-          <Loader />
         )}
-        <button
-          className="bg-blue-500 text-white font-medium text-xl"
-          onClick={() => setPage((prevPage) => prevPage + 1)}
-        >
-          Load more
-        </button>
       </div>
     </div>
   );
