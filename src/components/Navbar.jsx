@@ -54,6 +54,8 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  
+
   return (
     <IconContext.Provider value={{ size: "25px" }}>
       <div className=" bg-white sticky top-0 z-50">

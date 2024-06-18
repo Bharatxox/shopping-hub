@@ -7,6 +7,8 @@ import MyContext from "../../context/MyContext";
 import { useProductSearchQuery } from "../../service/product";
 import Rating from "../../components/Rating";
 import { Oval } from "react-loader-spinner";
+import { useSelector, useDispatch } from "react-redux";
+import { addToCart } from "../../redux/cartSlice";
 
 export const ProductPageList = () => {
   const { productCatId } = useParams();
@@ -14,9 +16,11 @@ export const ProductPageList = () => {
   const [page, setPage] = useState(1);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const cartItem = useSelector((state) => state.cart);
   console.log(productCatId);
 
-  console.log(productCatId);
+  // data fetch from the api search api
   const {
     data: searchData,
     // error: searchError,
@@ -24,6 +28,7 @@ export const ProductPageList = () => {
     isFetching: searchIsFetching,
   } = useProductSearchQuery({ search: productCatId, page: page });
 
+  // store the data in the product state
   useEffect(() => {
     if (searchData?.data?.products) {
       setProducts((prevProducts) => [
@@ -34,6 +39,18 @@ export const ProductPageList = () => {
     }
   }, [searchData]);
 
+  // handle add to cart event
+  const handleAddToCart = (product) => {
+    console.log("added to cart", product);
+    const isInCart = cartItem.some(
+      (item) => item.asin === product?.product_asin
+    );
+    if (product && !isInCart) {
+      dispatch(addToCart(product));
+    }
+  };
+
+  // handle scroll event throttelling
   const handleScroll = useCallback(
     throttle(() => {
       if (
@@ -49,6 +66,7 @@ export const ProductPageList = () => {
     [isLoading, searchIsFetching]
   );
 
+  // handle scroll event
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -60,11 +78,15 @@ export const ProductPageList = () => {
   //   }
   // }, [searchIsFetching, isLoading]);
 
+  // useEffect(() => {
+  //   if (searchIsFetching) {
+  //     console.log("trueeeeeeeeeeeeeeeeeeeeeeeeeee");
+  //   }
+  // }, [searchIsFetching]);
+
   useEffect(() => {
-    if (searchIsFetching) {
-      console.log("trueeeeeeeeeeeeeeeeeeeeeeeeeee");
-    }
-  }, [searchIsFetching]);
+    console.log(cartItem);
+  }, [cartItem, isLoading]);
 
   const truncateTitle = (title, length = 30) => {
     if (!title) return "N/A";
@@ -87,10 +109,10 @@ export const ProductPageList = () => {
       </div>
     );
   }
-  console.log(searchData);
-  console.log(page);
-  console.log(isLoading);
-  console.log(searchIsLoading);
+  // console.log(searchData);
+  // console.log(page);
+  // console.log(isLoading);
+  // console.log(searchIsLoading);
 
   return (
     <div className="">
@@ -105,12 +127,14 @@ export const ProductPageList = () => {
       </div>
       <div className="">
         <div className="grid grid-cols-12 gap-6">
-          {products?.map((deal) => (
-            <div
-              className="col-span-12 md:col-span-6 xl:col-span-4"
-              key={deal?.product_title}
-            >
-              <Link to={`/product/${deal?.asin}`}>
+          {products?.map((deal) => {
+            const isInCart = cartItem.some((item) => item.asin === deal?.asin);
+            return (
+              <div
+                className="col-span-12 md:col-span-6 xl:col-span-4"
+                key={deal?.product_title}
+              >
+                {/* <Link to={`/product/${deal?.asin}`}> */}
                 {/* <h2>{data?.deal_title}</h2> */}
                 <div
                   className={`  rounded-lg overflow-hidden max-w-sm mx-auto my-4 border ${
@@ -163,16 +187,25 @@ export const ProductPageList = () => {
                         >
                           <FontAwesomeIcon icon={faHeart} />
                         </button>
-                        <button className="bg-blue-600 border border-blue-600 text-white hover:bg-opacity-90 py-1 px-3 rounded text-sm">
+                        <button
+                          className={`border ${
+                            isInCart
+                              ? "bg-gray-400 border-gary-400"
+                              : "bg-blue-600 border-blue-600"
+                          } text-white hover:bg-opacity-90 py-1 px-3 rounded text-sm`}
+                          onClick={() => handleAddToCart(deal)}
+                          disabled={isInCart}
+                        >
                           <FontAwesomeIcon icon={faShoppingCart} />
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              </Link>
-            </div>
-          ))}
+                {/* </Link> */}
+              </div>
+            );
+          })}
         </div>
         {isLoading && (
           <div className="flex justify-center my-4">

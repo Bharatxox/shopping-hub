@@ -4,8 +4,12 @@ export const productsApi = createApi({
   reducerPath: "products",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://real-time-amazon-data.p.rapidapi.com/",
+    rateLimit: {
+      max: 5, // Maximum number of requests per second
+      timeWindow: 1000, // Time window in milliseconds
+    },
     headers: {
-      "x-rapidapi-key": "b39aefec0bmshfb02d91d4ec62d6p12e801jsn4c77c69bb84d",
+      "x-rapidapi-key": "6fb3df6cc1mshe55c8d853b195bbp1b7cacjsn0e6c476385b8",
       "x-rapidapi-host": "real-time-amazon-data.p.rapidapi.com",
     },
   }),

@@ -5,7 +5,7 @@ import Rating from "../../components/Rating";
 import { Oval } from "react-loader-spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 
 const productData = {
   status: "OK",
