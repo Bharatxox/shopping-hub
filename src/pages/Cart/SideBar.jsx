@@ -6,11 +6,22 @@ const SideBar = () => {
   const { mode } = useContext(MyContext);
   const cartItems = useSelector((state) => state.cart);
 
+  const convertCurrencyStringToInt = (currencyString) => {
+    // Remove the dollar sign, commas, and any non-numeric characters
+    const cleanedString = currencyString.replace(/[^0-9.-]+/g, "");
+    // Convert the cleaned string to a number
+    return parseInt(cleanedString, 10);
+  };
+
   const subtotal = cartItems.reduce(
-    (total, item) => total + item.product_price * item.qty,
+    (total, item) =>
+      total +
+      convertCurrencyStringToInt(item.product_minimum_offer_price) *
+        item.quantity,
     0
   );
-  const shippingFee = 99;
+  console.log(cartItems.length === 0 ? 0 : 99);
+  const shippingFee = cartItems.length === 0 ? 0 : 99;
   const tax = (subtotal + shippingFee) * 0.08;
   const total = subtotal + shippingFee + tax;
 

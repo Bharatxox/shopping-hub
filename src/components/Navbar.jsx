@@ -24,6 +24,7 @@ import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { doSignOut } from "../firebase/auth";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -34,6 +35,8 @@ const Navbar = () => {
     setEnabled(!enabled);
     toggleMode();
   };
+  const cartItem = useSelector((state) => state.cart);
+  const noOfCartItem = cartItem.length;
   const StyledBadge = styled(Badge)(() => ({
     "& .MuiBadge-badge": {
       right: -3,
@@ -53,8 +56,6 @@ const Navbar = () => {
     // console.log("singggggggggggggggggggggggg out");
     navigate("/login");
   };
-
-  
 
   return (
     <IconContext.Provider value={{ size: "25px" }}>
@@ -293,7 +294,7 @@ const Navbar = () => {
                   style={{ color: mode === "dark" ? "white" : "" }}
                 >
                   <IconButton aria-label="cart">
-                    <StyledBadge badgeContent={4} color="secondary">
+                    <StyledBadge badgeContent={noOfCartItem} color="secondary">
                       <ShoppingCartIcon
                         style={{ color: mode === "dark" ? "white" : "" }}
                       />

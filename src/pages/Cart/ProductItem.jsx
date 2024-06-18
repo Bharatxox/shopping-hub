@@ -70,9 +70,21 @@ const ProductItem = ({ item }) => {
     dispatch(removeFromCart(item.asin));
   };
 
+  const convertCurrencyStringToInt = (currencyString) => {
+    // Remove the dollar sign, commas, and any non-numeric characters
+    const cleanedString = currencyString.replace(/[^0-9.-]+/g, "");
+    // Convert the cleaned string to a number
+    return parseInt(cleanedString, 10);
+  };
+
+  const price = convertCurrencyStringToInt(item?.product_minimum_offer_price);
+  const quantity = item?.quantity;
+  const totalPrice = price * parseInt(quantity);
+  console.log(totalPrice);
+
   return (
     <div
-      className={`rounded-xl flex flex-col md:flex-row items-start gap-2 p-2 md:p-6 mb-4 ${
+      className={`rounded-xl flex flex-col md:flex-row items-start gap-2 p-2 md:p-6 mb-4 relative ${
         mode === "dark" ? "bg-slate-800" : "bg-blue-50"
       }`}
     >
@@ -80,7 +92,7 @@ const ProductItem = ({ item }) => {
       <div className="w-full lg:max-w-[150px] rounded-xl mr-4 md:mr-6 mb-4 lg:mb-0">
         <a href="#!">
           <img
-            src={item.img}
+            src={item.product_photo}
             alt=""
             className="max-w-full h-auto rounded-xl mx-auto"
           />
@@ -91,14 +103,14 @@ const ProductItem = ({ item }) => {
         {/* <!-- product details --> */}
         <div className="flex-1">
           <div className="text-base md:text-lg hover:text-blue-600 mb-4">
-            <a href="#!">{item.title}</a>
+            <a href="#!">{item.product_title}</a>
           </div>
           <div>
             <h3 className="text-xl font-bold text-blue-600">
-              Rs. {item.price}
+              Rs. {item.product_minimum_offer_price}
             </h3>
             <QtyField
-              value={item.qty}
+              value={item.quantity}
               onIncrease={handleIncreaseQuantity}
               onDecrease={handleDecreaseQuantity}
             />
@@ -114,6 +126,12 @@ const ProductItem = ({ item }) => {
             <FontAwesomeIcon icon={faTrashAlt} />
           </button>
         </div>
+      </div>
+      <div className="absolute bottom-6 right-6 ">
+        <p className="text-xl font-bold">
+          Total:{" "}
+          <span className="text-xl font-bold text-blue-600">₹{totalPrice}</span>
+        </p>
       </div>
     </div>
   );
