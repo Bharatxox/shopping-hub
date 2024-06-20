@@ -1,4 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { fireDB } from "../firebase/FirebaseConfig"; // Path to your firebase configuration file
+import { getAuth } from "firebase/auth";
 const initialState = [];
 
 const cartSlice = createSlice({
@@ -34,5 +37,22 @@ const cartSlice = createSlice({
 
 export const { addToCart, removeFromCart, increaseQuantity, decreaseQuantity } =
   cartSlice.actions;
+
+export const addItemToCart = (item) => async (dispatch) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (user) {
+    const userDocRef = doc(fireDB, "users", user.uid);
+    console.log(user.uid, doc(fireDB, "users", user.uid));
+
+    await updateDoc(userDocRef, {
+      cart: arrayUnion({
+        ...item,
+        quantity: 1,
+      }),
+    });
+  }
+  dispatch(addToCart(item));
+};
 
 export default cartSlice.reducer;

@@ -9,6 +9,7 @@ import Rating from "../../components/Rating";
 import { Oval } from "react-loader-spinner";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../../redux/cartSlice";
+import { addItemToCart } from "../../redux/cartSlice";
 
 export const ProductPageList = () => {
   const { productCatId } = useParams();
@@ -46,7 +47,7 @@ export const ProductPageList = () => {
       (item) => item.asin === product?.product_asin
     );
     if (product && !isInCart) {
-      dispatch(addToCart(product));
+      dispatch(addItemToCart(product));
     }
   };
 

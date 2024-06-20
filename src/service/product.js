@@ -9,7 +9,7 @@ export const productsApi = createApi({
       timeWindow: 1000, // Time window in milliseconds
     },
     headers: {
-      "x-rapidapi-key": "6fb3df6cc1mshe55c8d853b195bbp1b7cacjsn0e6c476385b8",
+      "x-rapidapi-key": "fe0ebe37femsh07b53786ff1b0a3p10f9d7jsn257e28458744",
       "x-rapidapi-host": "real-time-amazon-data.p.rapidapi.com",
     },
   }),

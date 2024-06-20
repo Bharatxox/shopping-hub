@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MyContext from "../../context/MyContext";
 import { fireDB } from "../../firebase/FirebaseConfig";
-import { Timestamp, addDoc, collection } from "firebase/firestore";
+import { Timestamp, addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { useNavigate, Link } from "react-router-dom";
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth";
 import Loader from "../../components/Loader";
@@ -72,9 +72,10 @@ const SignUpForm = () => {
         time: Timestamp.now(),
         dob: dob,
         password: password,
+        cart: [],
       };
-      const userRef = collection(fireDB, "users");
-      await addDoc(userRef, user);
+      const userRef = doc(fireDB, "users", user.uid);
+      await setDoc(userRef, user, { merge: true });
       toast.success("Signup Successfully");
       setFirstName("");
       setlastName("");
