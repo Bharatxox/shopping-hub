@@ -9,7 +9,7 @@ import Rating from "../../components/Rating";
 import { Oval } from "react-loader-spinner";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../../redux/cartSlice";
-import { addItemToCart } from "../../redux/cartSlice";
+import { addItemToCart } from "../../service/firebaseCart";
 
 export const ProductPageList = () => {
   const { productCatId } = useParams();

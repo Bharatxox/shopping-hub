@@ -9,6 +9,11 @@ import {
   increaseQuantity,
   decreaseQuantity,
 } from "../../redux/cartSlice";
+import {
+  removeItemFromCart,
+  increaseItemQuantity,
+  decreaseItemQuantity,
+} from "../../service/firebaseCart";
 
 const QtyField = ({ value, onIncrease, onDecrease }) => {
   const { mode } = useContext(MyContext);
@@ -59,15 +64,18 @@ const ProductItem = ({ item }) => {
   const dispatch = useDispatch();
 
   const handleIncreaseQuantity = () => {
-    dispatch(increaseQuantity(item.asin));
+    dispatch(increaseItemQuantity(item.asin));
+    // increaseItemQuantity(item.asin);
   };
 
   const handleDecreaseQuantity = () => {
-    dispatch(decreaseQuantity(item.asin));
+    dispatch(decreaseItemQuantity(item.asin));
+    // decreaseItemQuantity(item.asin);
   };
 
   const handleRemoveFromCart = () => {
-    dispatch(removeFromCart(item.asin));
+    dispatch(removeItemFromCart(item.asin));
+    // removeItemFromCart(item.asin);
   };
 
   const convertCurrencyStringToInt = (currencyString) => {

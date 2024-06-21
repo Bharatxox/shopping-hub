@@ -1,12 +1,18 @@
-import { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import MyContext from "../../context/MyContext";
 import ProductItem from "./ProductItem";
 import SideBar from "./SideBar";
+import { fetchCartData } from "../../service/firebaseCart";
 
 const Cart = () => {
   const { mode } = useContext(MyContext);
   const cartItems = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCartData());
+  }, [dispatch]);
 
   return (
     <section
